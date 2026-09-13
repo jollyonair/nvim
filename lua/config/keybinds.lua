@@ -58,6 +58,60 @@ vim.keymap.set("n", "<leader>li", ":checkhealth vim.lsp<CR>", { desc = "LSP Info
 -- run make in current working directory
 vim.keymap.set("n", "<leader>mm", "<cmd>make<CR>")
 
+------------------------------------------------------------
+-- NEXTCLOUD NOTES
+------------------------------------------------------------
+local NOTES_PATH = "/home/jolly/Nextcloud/Notes"
+
+vim.keymap.set("n", "<leader>no", function()
+    require("oil").open(NOTES_PATH)
+end, { desc = "Open Notes root" })
+
+vim.keymap.set("n", "<leader>nf", function()
+    local ok, telescope = pcall(require, "telescope.builtin")
+    if ok then
+        telescope.find_files({ cwd = NOTES_PATH })
+    else
+        vim.cmd("edit " .. NOTES_PATH)
+    end
+end, { desc = "Find note" })
+
+------------------------------------------------------------
+-- Spell (writing mode)
+------------------------------------------------------------
+vim.opt.spell = true
+vim.opt.spelllang = { "en_au" }
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "text", "gitcommit", "org" },
+    callback = function()
+        vim.opt_local.spell = true
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true
+    end,
+})
+
+vim.cmd [[
+  highlight SpellBad gui=undercurl guisp=red
+  highlight SpellCap gui=undercurl guisp=blue
+]]
+
+-- Buffer navigation / creation
+-- Move between splits
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+-- Resize splits
+vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<CR>")
+vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<CR>")
+vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<CR>")
+vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>")
+
+vim.o.splitright = true
+vim.o.splitbelow = true
+
 -- source file
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
